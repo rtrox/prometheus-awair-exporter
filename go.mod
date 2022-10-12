@@ -1,4 +1,4 @@
-module github.com/rtrox/prometheus-awair-exporter
+module prometheus-awair-exporter
 
 go 1.19
 
