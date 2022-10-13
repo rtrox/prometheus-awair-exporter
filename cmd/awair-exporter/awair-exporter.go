@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"flag"
+	"fmt"
 	"net/http"
 	"os"
 	"os/signal"
@@ -11,11 +12,11 @@ import (
 
 	"prometheus-awair-exporter/internal/exporter"
 
-	"github.com/rs/zerolog"
-	"github.com/rs/zerolog/log"
-
+	"github.com/joho/godotenv"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
+	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
 )
 
 var (
@@ -38,18 +39,32 @@ func init() {
 	zerolog.SetGlobalLevel(zerolog.InfoLevel)
 }
 
+func newHealthCheckHandler() http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		fmt.Fprintln(w, "OK")
+	})
+}
+
 func main() {
 	debug := flag.Bool("debug", false, "sets log level to debug")
-	hostname := flag.String("hostname", "", "hostname of Awair device to poll")
 	flag.Parse()
-
-	if *hostname == "" {
-		log.Fatal().Msg("hostname flag must be set.")
-	}
 
 	zerolog.SetGlobalLevel(zerolog.InfoLevel)
 	if *debug {
 		zerolog.SetGlobalLevel(zerolog.DebugLevel)
+	}
+
+	err := godotenv.Load(".env")
+	if err != nil {
+		// Typical use will be via direct env in kubernetes,
+		// don't fail here.
+		log.Warn().Err(err).Msg("No .env file loaded")
+	}
+
+	hostname := os.Getenv("AWAIR_HOSTNAME")
+	if hostname == "" {
+		log.Fatal().
+			Msg("AWAIR_HOSTNAME must be set to the hostname of the awair device")
 	}
 
 	var srv http.Server
@@ -78,7 +93,7 @@ func main() {
 		Msg("Exporter Started.")
 
 	// TODO: retries
-	ex, err := exporter.NewAwairExporter(*hostname)
+	ex, err := exporter.NewAwairExporter(hostname)
 	if err != nil {
 		log.Fatal().
 			Err(err).
@@ -89,7 +104,7 @@ func main() {
 	infoMetricOpts.ConstLabels = prometheus.Labels{
 		"app_name": app_name,
 		"version":  version,
-		"hostname": *hostname,
+		"hostname": hostname,
 	}
 	prometheus.MustRegister(prometheus.NewGaugeFunc(
 		infoMetricOpts,
@@ -98,6 +113,7 @@ func main() {
 
 	router := http.NewServeMux()
 	router.Handle("/metrics", promhttp.Handler())
+	router.Handle("/healthz", newHealthCheckHandler())
 	srv.Addr = ":8080"
 	srv.Handler = router
 	if err := srv.ListenAndServe(); err != http.ErrServerClosed {

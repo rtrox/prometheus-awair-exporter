@@ -1,0 +1,25 @@
+---
+# Only one ServiceMonitor needed, it will pick
+# up any pod matched by the Service
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  labels:
+    app.kubernetes.io/component: metrics
+    app.kubernetes.io/instance: &name prometheus-awair-exporter
+    app.kubernetes.io/name: *name
+    app.kubernetes.io/part-of: *name
+    jobLabel: *name
+  name: prometheus-awair-exporter
+  namespace: awair-exporter
+spec:
+  endpoints:
+  - port: http-metrics
+    scheme: http
+  jobLabel: jobLabel
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: *name
+      app.kubernetes.io/component: metrics
+  podTargetLabels:
+    - awair-exporter/device-name

@@ -1,0 +1,31 @@
+---
+# Only one service needed for multiple exporters.
+# ServiceMonitor will monitor each matched pod.
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    prometheus.io/scrape: "true"
+  labels:
+    app.kubernetes.io/component: metrics
+    app.kubernetes.io/name: &name prometheus-awair-exporter
+    app.kubernetes.io/instance: *name
+    app.kubernetes.io/part-of: *name
+    jobLabel: *name
+  name: prometheus-awair-exporter
+  namespace: awair-exporter
+spec:
+  internalTrafficPolicy: Cluster
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+  - name: http-metrics
+    port: 8080
+    protocol: TCP
+    targetPort: http
+  selector:
+      app.kubernetes.io/instance: *name
+      app.kubernetes.io/component: metrics
+  sessionAffinity: None
+  type: ClusterIP

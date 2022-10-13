@@ -1,0 +1,85 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    // sets the pod label below, which is used by ServiceMonitor
+    // to set metric label [change this]
+    awair-exporter/device-name: &device living-room
+    // [change this]
+    app.kubernetes.io/name: &name prometheus-awair-exporter-living-room
+    app.kubernetes.io/instance: &instance prometheus-awair-exporter
+    app.kubernetes.io/component: exporter
+    app.kubernetes.io/part-of: *instance
+    k8s-app: *name
+  name: *name
+  namespace: awair-exporter
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: *name
+      app.kubernetes.io/instance: *instance
+      app.kubernetes.io/component: metrics
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: *name
+        app.kubernetes.io/instance: *instance
+        app.kubernetes.io/component: metrics
+        # ServiceMonitor adds this device-name field as a metric label
+        awair-exporter/device-name: *device
+    spec:
+      securityContext:
+        runAsUser: 10001
+        runAsGroup: 10001
+        fsGroup: 10001
+      containers:
+        - name: awair-exporter
+          image: 'rtrox/prometheus-awair-exporter:a43adf6'
+          imagePullPolicy: IfNotPresent
+          env:
+            # AWAIR_HOSTNAME is the hostname we should reach out to
+            # for this device [change this]
+            - name: AWAIR_HOSTNAME
+              value: "192.168.1.2"
+          resources:
+            limits:
+              memory: 256Mi
+            requests:
+              cpu: 100m
+              memory: 64Ki
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            seccompProfile:
+              type: RuntimeDefault
+            capabilities:
+              drop:
+                - ALL
+          livenessProbe:
+            failureThreshold: 5
+            httpGet:
+              path: /healthz
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /healthz
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          ports:
+            - containerPort: 8080
+              name: http
+              protocol: TCP
