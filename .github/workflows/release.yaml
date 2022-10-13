@@ -1,0 +1,57 @@
+---
+name: Create Release
+# https://dev.to/koddr/github-action-for-release-your-go-projects-as-fast-and-easily-as-possible-20a2
+# https://github.com/orgs/community/discussions/25244
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+jobs:
+  main-branch-check:
+    runs-on: ubuntu-latest
+    outputs:
+      on_main_branch: ${{ steps.register_tag.outputs.on_main_branch }}
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - run: git fetch --force --tags
+      - uses: rickstaa/action-contains-tag@v1
+        id: contains_tag
+        with:
+          reference: "main"
+          tag: "${{ github.ref }}"
+      
+      - name: register output
+        id: register_tag
+        run: |
+          echo "retval: ${{ steps.contains_tag.outputs.retval }}"
+          echo "::set-output name=on_main_branch::${{ steps.contains_tag.outputs.retval }}"
+  release-tag:
+    runs-on: ubuntu-latest
+    needs: main-branch-check
+    if: ${{ needs.main-branch-check.outputs.on_main_branch }} == true
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - run: git fetch --force --tags
+
+      - name: Setup Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: 1.19
+        id: go
+      
+      - name: Create Release
+        uses: goreleaser/goreleaser-action@v3
+        with:
+          version: latest
+          args: release --rm-dist --config .github/goreleaser-dist.yaml
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    
