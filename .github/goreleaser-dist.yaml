@@ -24,3 +24,6 @@ builds:
       - 7
 
     mod_timestamp: '{{ .CommitTimestamp }}'
+  
+changelog:
+  use: github-native
