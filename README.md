@@ -1,4 +1,4 @@
-# Prometheus Awair Exporter [![Coverage Status](https://coveralls.io/repos/github/rtrox/prometheus-awair-exporter/badge.svg?branch=main)](https://coveralls.io/github/rtrox/prometheus-awair-exporter?branch=main)
+# Prometheus Awair Exporter ![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/rtrox/prometheus-awair-exporter) ![Docker Image Version (latest semver)](https://img.shields.io/docker/v/rtrox/prometheus-awair-exporter?label=docker%20image) ![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/rtrox/prometheus-awair-exporter) ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/rtrox/prometheus-awair-exporter/Run%20Tests?label=tests) [![Coverage Status](https://coveralls.io/repos/github/rtrox/prometheus-awair-exporter/badge.svg?branch=main)](https://coveralls.io/github/rtrox/prometheus-awair-exporter?branch=main)
 
 Prometheus Awair Exporter connects to an Awair Element device over the Local API, and exports metric via prometheus.
 
@@ -15,17 +15,37 @@ Usage of ./awair-exporter:
         enables process stats exporter
 ```
 
-So a normal usage would be:
+So normal usage would be:
+
 ```
 AWAIR_HOSTNAME=192.168.1.2 ./awair-exporter
 ```
-## Running In Docker
+
+## Running via Docker
 
 Docker images are also generated automatically from this repo, and are available [in DockerHub](https://hub.docker.com/repository/docker/rtrox/prometheus-awair-exporter) for use. example usage:
 
 ```bash
-docker run rtrox/prometheus-awair-exporter:v0.0.2 -e AWAIR_HOSTNAME=192.168.3.105 -p 8080:8080
+docker run -d --name awair-exporter -e AWAIR_HOSTNAME=192.168.3.105 -p 8080:8080 ~rtrox/prometheus-awair-exporter:v0.0.
 ```
+
+## Running via Docker Compose
+
+A docker-compose file is provided in the root of this directory. Update your AWAIR_HOSTNAME value to the IP/Hostname of your awair device, and run:
+
+```
+docker compose up -d
+```
+
+## Running via Kubernetes
+
+Kubernetes manifests are provided in the [`manifests`](kubernetes/manifests/) folder, update the `AWAIR_HOSTNAME` environmental variable in `deployment.yaml`, as well as `awair-exporter/device-name` (the ServiceMonitor will set this as an `awair_exporter_device_name` label on all metrics). From here:
+
+```
+kubectl apply -f manifests/
+```
+
+If you need to run multiple exporters, make sure you adjust the `metadata.name` and `metadata.labels.app.kubernetes.io/name` fields in each deployment to be unique. No changes need to be made to `service.yaml` or `servicemonitor.yaml` files, they will automatically pick up new deployments for monitoring.
 
 ## Example Metric Output
 
