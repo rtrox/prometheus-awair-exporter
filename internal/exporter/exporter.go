@@ -245,13 +245,13 @@ func (e *AwairExporter) GetConfig() (*ConfigResponse, error) {
 }
 
 func (e *AwairExporter) Collect(ch chan<- prometheus.Metric) {
-	var values *AwairValues
-	var config *ConfigResponse
-	var err error
+	values := &AwairValues{}
+	config := &ConfigResponse{}
 
 	wg := sync.WaitGroup{}
 	wg.Add(2)
 	go func() {
+		var err error
 		values, err = e.GetMetrics()
 		if err != nil {
 			log.Error().Err(err).
@@ -263,6 +263,7 @@ func (e *AwairExporter) Collect(ch chan<- prometheus.Metric) {
 			Msg("Metrics successfully retrieved")
 	}()
 	go func() {
+		var err error
 		config, err = e.GetConfig()
 		if err != nil {
 			log.Error().Err(err).
