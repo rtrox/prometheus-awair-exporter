@@ -50,21 +50,21 @@ var (
 	)
 
 	co2 = prometheus.NewDesc(
-		prometheus.BuildFQName("awair", "", "c02"),
+		prometheus.BuildFQName("awair", "", "co2"),
 		"Carbon Dioxide (ppm)",
 		nil,
 		nil,
 	)
 
 	co2_estimated = prometheus.NewDesc(
-		prometheus.BuildFQName("awair", "", "c02_est"),
+		prometheus.BuildFQName("awair", "", "co2_est"),
 		"Estimated Carbon Dioxide (ppm - calculated by the TVOC sensor)",
 		nil,
 		nil,
 	)
 
 	co2_estimate_baseline = prometheus.NewDesc(
-		prometheus.BuildFQName("awair", "", "c02_est_baseline"),
+		prometheus.BuildFQName("awair", "", "co2_est_baseline"),
 		"A unitless value that represents the baseline from which the TVOC sensor partially derives its estimated (e)CO₂output.",
 		nil,
 		nil,
@@ -128,7 +128,7 @@ type AwairValues struct {
 	DewPoint       float64 `json:"dew_point"`
 	Temp           float64 `json:"temp"`
 	Humidity       float64 `json:"humid"`
-	AbsHumdity     float64 `json:"abs_humid"`
+	AbsHumidity    float64 `json:"abs_humid"`
 	CO2            float64 `json:"co2"`
 	CO2Est         float64 `json:"co2_est"`
 	CO2EstBaseline float64 `json:"co2_est_baseline"`
@@ -288,7 +288,7 @@ func (e *AwairExporter) Collect(ch chan<- prometheus.Metric) {
 		humidity, prometheus.GaugeValue, values.Humidity,
 	)
 	ch <- prometheus.MustNewConstMetric(
-		abs_humidity, prometheus.GaugeValue, values.AbsHumdity,
+		abs_humidity, prometheus.GaugeValue, values.AbsHumidity,
 	)
 	ch <- prometheus.MustNewConstMetric(
 		co2, prometheus.GaugeValue, values.CO2,
