@@ -14,6 +14,7 @@ import (
 
 	"github.com/joho/godotenv"
 	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/collectors"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
@@ -94,7 +95,6 @@ func main() {
 		Str("version", version).
 		Msg("Exporter Started.")
 
-	// TODO: retries
 	ex, err := exporter.NewAwairExporter(hostname)
 	if err != nil {
 		log.Fatal().
@@ -117,13 +117,13 @@ func main() {
 		ex,
 	)
 	if *goCollector {
-		reg.MustRegister(prometheus.NewGoCollector())
+		reg.MustRegister(collectors.NewGoCollector())
 	}
 	if *processCollector {
-		reg.MustRegister(prometheus.NewProcessCollector(prometheus.ProcessCollectorOpts{}))
+		reg.MustRegister(collectors.NewProcessCollector(collectors.ProcessCollectorOpts{}))
 	}
 	router := http.NewServeMux()
-	router.Handle("/metrics",  promhttp.HandlerFor(reg, promhttp.HandlerOpts{}))
+	router.Handle("/metrics", promhttp.HandlerFor(reg, promhttp.HandlerOpts{}))
 	router.Handle("/healthz", newHealthCheckHandler())
 	srv.Addr = ":8080"
 	srv.Handler = router

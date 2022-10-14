@@ -3,6 +3,9 @@ package exporter
 import (
 	"fmt"
 	"io"
+	"io/ioutil"
+	"regexp"
+	"time"
 
 	"strings"
 	"testing"
@@ -11,7 +14,9 @@ import (
 	"net/http/httptest"
 
 	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	dto "github.com/prometheus/client_model/go"
+	"github.com/stretchr/testify/require"
 
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
@@ -184,4 +189,67 @@ func TestCollect(t *testing.T) {
 		received++
 	}
 	assert.GreaterOrEqual(received, 15)
+}
+
+func TestAllMetricsPopulated(t *testing.T) {
+	assert := assert.New(t)
+	require := require.New(t)
+	s := getTestServer()
+	defer s.Close()
+	e, err := exporterFromTestServer(s)
+	require.Nil(err)
+
+	reg := prometheus.NewPedanticRegistry()
+	reg.MustRegister(e)
+	srv := httptest.NewServer(promhttp.HandlerFor(reg, promhttp.HandlerOpts{}))
+	defer srv.Close()
+
+	c := &http.Client{Timeout: 300 * time.Millisecond}
+	resp, err := c.Get(srv.URL)
+	require.Nil(err)
+	defer resp.Body.Close()
+
+	buf, err := ioutil.ReadAll(resp.Body)
+	require.Nil(err)
+
+	tests := []struct {
+		desc  string
+		match *regexp.Regexp
+	}{
+		{"abs_humidity_desc", regexp.MustCompile(`(?m)^# HELP awair_absolute_humidity .+$`)},
+		{"abs_humidity", regexp.MustCompile(`(?m)^awair_absolute_humidity.* 8.41$`)},
+		{"co2_desc", regexp.MustCompile(`(?m)^# HELP awair_co2 .*[a-zA-Z]+.*$`)},
+		{"co2", regexp.MustCompile(`(?m)^awair_co2.* 625$`)},
+		{"co2_est_desc", regexp.MustCompile(`(?m)^# HELP awair_co2_est .*[a-zA-Z]+.*$`)},
+		{"co2_est", regexp.MustCompile(`(?m)^awair_co2_est.* +563$`)},
+		{"co2_est_baseline_desc", regexp.MustCompile(`(?m)^# HELP awair_co2_est_baseline .*[a-zA-Z]+.*$`)},
+		{"co2_est_baseline", regexp.MustCompile(`(?m)^awair_co2_est_baseline.* +35252$`)},
+		{"device_info_desc", regexp.MustCompile(`(?m)^# HELP awair_device_info .*[a-zA-Z]+.*$`)},
+		{"device_info", regexp.MustCompile(`(?m)^awair_device_info{device_uuid=".+",firmware_version="1.+",voc_feature_set=".+".*} 1$`)},
+		{"dew_point_desc", regexp.MustCompile(`(?m)^# HELP awair_dew_point .*[a-zA-Z]+.*$$`)},
+		{"dew_point", regexp.MustCompile(`(?m)^awair_dew_point.* 8.95$`)},
+		{"humidity_desc", regexp.MustCompile(`(?m)^# HELP awair_humidity .*[a-zA-Z]+.*$`)},
+		{"humidity", regexp.MustCompile(`(?m)^awair_humidity.* 45.7$`)},
+		{"pm10_desc", regexp.MustCompile(`(?m)^# HELP awair_pm10 .*[a-zA-Z]+.*$`)},
+		{"pm10", regexp.MustCompile(`(?m)^awair_pm10.* 42$`)},
+		{"dpm25_desc", regexp.MustCompile(`(?m)^# HELP awair_pm25 .*[a-zA-Z]+.*$`)},
+		{"pm25", regexp.MustCompile(`(?m)^awair_pm25.* 40$`)},
+		{"score_desc", regexp.MustCompile(`(?m)^# HELP awair_score .*[a-zA-Z]+.*$`)},
+		{"score", regexp.MustCompile(`(?m)^awair_score.* 89$`)},
+		{"temp_desc", regexp.MustCompile(`(?m)^# HELP awair_temp .*[a-zA-Z]+.*$`)},
+		{"temp", regexp.MustCompile(`(?m)^awair_temp.* 21.13$`)},
+		{"voc_desc", regexp.MustCompile(`(?m)^# HELP awair_voc .*[a-zA-Z]+.*$`)},
+		{"voc", regexp.MustCompile(`(?m)^awair_voc.* 60$`)},
+		{"voc_baseline_desc", regexp.MustCompile(`(?m)^# HELP awair_voc_baseline .*[a-zA-Z]+.*$`)},
+		{"voc_baseline", regexp.MustCompile(`(?m)^awair_voc_baseline.* 36539$`)},
+		{"voc_ethanol_desc", regexp.MustCompile(`(?m)^# HELP awair_voc_ethanol_raw .*[a-zA-Z]+.*$`)},
+		{"voc_ethanol", regexp.MustCompile(`(?m)^awair_voc_ethanol_raw.* 36$`)},
+		{"voc_h2_desc", regexp.MustCompile(`(?m)^# HELP awair_voc_h2_raw .*[a-zA-Z]+.*$`)},
+		{"voc_h2", regexp.MustCompile(`(?m)^awair_voc_h2_raw.* 25$`)},
+	}
+	for _, tt := range tests {
+		t.Run(tt.desc, func(t *testing.T) {
+			assert.True(tt.match.Match(buf), "Regex %s didn't match a line!", tt.match.String())
+		})
+	}
 }
