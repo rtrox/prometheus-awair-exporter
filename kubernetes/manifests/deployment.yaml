@@ -37,7 +37,7 @@ spec:
         fsGroup: 10001
       containers:
         - name: awair-exporter
-          image: 'rtrox/prometheus-awair-exporter:a43adf6'
+          image: 'rtrox/prometheus-awair-exporter:v0.0.2'
           imagePullPolicy: IfNotPresent
           env:
             # AWAIR_HOSTNAME is the hostname we should reach out to

@@ -47,6 +47,8 @@ func newHealthCheckHandler() http.Handler {
 
 func main() {
 	debug := flag.Bool("debug", false, "sets log level to debug")
+	goCollector := flag.Bool("gocollector", false, "enables go stats exporter")
+	processCollector := flag.Bool("processcollector", false, "enables process stats exporter")
 	flag.Parse()
 
 	zerolog.SetGlobalLevel(zerolog.InfoLevel)
@@ -100,19 +102,28 @@ func main() {
 			Msg("Failed to connect to Awair device.")
 	}
 
-	prometheus.MustRegister(ex)
 	infoMetricOpts.ConstLabels = prometheus.Labels{
 		"app_name": app_name,
 		"version":  version,
 		"hostname": hostname,
 	}
-	prometheus.MustRegister(prometheus.NewGaugeFunc(
-		infoMetricOpts,
-		func() float64 { return 1 },
-	))
 
+	reg := prometheus.NewPedanticRegistry()
+	reg.MustRegister(
+		prometheus.NewGaugeFunc(
+			infoMetricOpts,
+			func() float64 { return 1 },
+		),
+		ex,
+	)
+	if *goCollector {
+		reg.MustRegister(prometheus.NewGoCollector())
+	}
+	if *processCollector {
+		reg.MustRegister(prometheus.NewProcessCollector(prometheus.ProcessCollectorOpts{}))
+	}
 	router := http.NewServeMux()
-	router.Handle("/metrics", promhttp.Handler())
+	router.Handle("/metrics",  promhttp.HandlerFor(reg, promhttp.HandlerOpts{}))
 	router.Handle("/healthz", newHealthCheckHandler())
 	srv.Addr = ":8080"
 	srv.Handler = router

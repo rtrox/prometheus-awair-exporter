@@ -74,7 +74,7 @@ jobs:
           GIT_TAG=$(git tag --points-at HEAD | tr -d '\n')
           if [ ! -z "$GIT_TAG" ]; then TAGS="$TAGS --tag ${DOCKER_IMAGE}:${GIT_TAG}"; fi
           echo DOCKER_IMAGE=${DOCKER_IMAGE} >> $GITHUB_ENV
-          echo BUILDX_ARGS="--platform ${DOCKER_PLATFORMS} ${TAGS} --file ./Dockerfile ./" >> $GITHUB_ENV
+          echo BUILDX_ARGS="--platform ${DOCKER_PLATFORMS} --build-arg VERSION=${GIT_TAG} ${TAGS} --file ./Dockerfile ./" >> $GITHUB_ENV
 
       # https://github.com/docker/setup-qemu-action
       - name: Set up QEMU
