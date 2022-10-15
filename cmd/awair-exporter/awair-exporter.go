@@ -10,6 +10,7 @@ import (
 	"syscall"
 	"time"
 
+	"prometheus-awair-exporter/internal/app_info"
 	"prometheus-awair-exporter/internal/exporter"
 
 	"github.com/joho/godotenv"
@@ -21,18 +22,8 @@ import (
 )
 
 var (
-	// TODO: Remove once automated
-	// go build -ldflags="-X \"main.version=${VERSION}\"" ./cmd/awair-exporter/awair-exporter.go
 	app_name = "awair-exporter"
 	version  = "x.x.x"
-)
-
-var (
-	infoMetricOpts = prometheus.GaugeOpts{
-		Namespace: "exporter",
-		Name:      "info",
-		Help:      "Info about this awair-exporter",
-	}
 )
 
 func init() {
@@ -102,18 +93,14 @@ func main() {
 			Msg("Failed to connect to Awair device.")
 	}
 
-	infoMetricOpts.ConstLabels = prometheus.Labels{
-		"app_name": app_name,
-		"version":  version,
-		"hostname": hostname,
-	}
-
+	appFunc := app_info.AppInfoGaugeFunc(
+		app_name,
+		version,
+		hostname,
+	)
 	reg := prometheus.NewPedanticRegistry()
 	reg.MustRegister(
-		prometheus.NewGaugeFunc(
-			infoMetricOpts,
-			func() float64 { return 1 },
-		),
+		appFunc,
 		ex,
 	)
 	if *goCollector {

@@ -28,7 +28,7 @@ AWAIR_HOSTNAME=192.168.1.2 ./awair-exporter
 Docker images are also generated automatically from this repo, and are available [in DockerHub](https://hub.docker.com/repository/docker/rtrox/prometheus-awair-exporter) for use. example usage:
 
 ```bash
-docker run -d --name awair-exporter -e AWAIR_HOSTNAME=192.168.3.105 -p 8080:8080 ~rtrox/prometheus-awair-exporter:v0.0.2
+docker run -d --name awair-exporter -e AWAIR_HOSTNAME=192.168.3.105 -p 8080:8080 ~rtrox/prometheus-awair-exporter:v0.0.3
 ```
 
 ## Running via Docker Compose
