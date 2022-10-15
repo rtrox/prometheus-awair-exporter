@@ -3,6 +3,7 @@
 
 Prometheus Awair Exporter connects to an Awair Element device over the Local API, and exports metric via prometheus.
 
+![Grafana Dashboard](.github/dashboard.png "Grafana Dashboard")
 ## Operating the Exporter
 
 Prometheus-Awair-Exporter requires one environmental variable to be set - `AWAIR_HOSTNAME`, which defines the IP or hostname of the Awair device you wish to monitor. There are also additional flags which can be passed for debugging:
