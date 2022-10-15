@@ -5,4 +5,4 @@ services:
     ports:
       - "8080:8080"
     environment:
-      AWAIR_HOSTNAME: 192.168.1.2    
+      AWAIR_HOSTNAME: 192.168.1.2

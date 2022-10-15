@@ -3,10 +3,10 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    // sets the pod label below, which is used by ServiceMonitor
-    // to set metric label [change this]
+    # sets the pod label below, which is used by ServiceMonitor
+    # to set metric label [change this]
     awair-exporter/device-name: &device living-room
-    // [change this]
+    # [change this]
     app.kubernetes.io/name: &name prometheus-awair-exporter-living-room
     app.kubernetes.io/instance: &instance prometheus-awair-exporter
     app.kubernetes.io/component: exporter

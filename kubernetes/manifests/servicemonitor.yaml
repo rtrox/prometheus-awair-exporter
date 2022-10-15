@@ -14,8 +14,8 @@ metadata:
   namespace: awair-exporter
 spec:
   endpoints:
-  - port: http-metrics
-    scheme: http
+    - port: http-metrics
+      scheme: http
   jobLabel: jobLabel
   selector:
     matchLabels:

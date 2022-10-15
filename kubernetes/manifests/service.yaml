@@ -17,15 +17,15 @@ metadata:
 spec:
   internalTrafficPolicy: Cluster
   ipFamilies:
-  - IPv4
+    - IPv4
   ipFamilyPolicy: SingleStack
   ports:
-  - name: http-metrics
-    port: 8080
-    protocol: TCP
-    targetPort: http
+    - name: http-metrics
+      port: 8080
+      protocol: TCP
+      targetPort: http
   selector:
-      app.kubernetes.io/instance: *name
-      app.kubernetes.io/component: metrics
+    app.kubernetes.io/instance: *name
+    app.kubernetes.io/component: metrics
   sessionAffinity: None
   type: ClusterIP
