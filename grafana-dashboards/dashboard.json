@@ -94,9 +94,11 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "builder",
+          "exemplar": false,
           "expr": "awair_score",
+          "instant": true,
           "legendFormat": "{{awair_exporter_device_name}}",
-          "range": true,
+          "range": false,
           "refId": "A"
         }
       ],
@@ -198,7 +200,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "builder",
-          "expr": "awair_score",
+          "expr": "awair_score{awair_exporter_device_name=~\"$device\"}",
           "legendFormat": "{{awair_exporter_device_name}}",
           "range": true,
           "refId": "A"
@@ -294,7 +296,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "builder",
-          "expr": "awair_co2",
+          "expr": "awair_co2{awair_exporter_device_name=~\"$device\"}",
           "legendFormat": "{{awair_exporter_device_name}}",
           "range": true,
           "refId": "A"
@@ -398,7 +400,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "builder",
-          "expr": "awair_voc",
+          "expr": "awair_voc{awair_exporter_device_name=~\"$device\"}",
           "legendFormat": "{{awair_exporter_device_name}}",
           "range": true,
           "refId": "A"
@@ -502,7 +504,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "builder",
-          "expr": "awair_pm25",
+          "expr": "awair_pm25{awair_exporter_device_name=~\"$device\"}",
           "legendFormat": "{{awair_exporter_device_name}}",
           "range": true,
           "refId": "A"
@@ -590,7 +592,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "(awair_temp * 9/5) + 32",
+          "expr": "(awair_temp{awair_exporter_device_name=~\"$device\"} * 9/5) + 32",
           "legendFormat": "{{awair_exporter_device_name}}",
           "range": true,
           "refId": "A"
@@ -682,7 +684,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "builder",
-          "expr": "awair_humidity",
+          "expr": "awair_humidity{awair_exporter_device_name=~\"$device\"}",
           "legendFormat": "{{awair_exporter_device_name}}",
           "range": true,
           "refId": "A"
@@ -690,14 +692,265 @@
       ],
       "title": "Humidity (%)",
       "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "displayMode": "auto",
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 51
+      },
+      "id": 17,
+      "options": {
+        "footer": {
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true
+      },
+      "pluginVersion": "9.1.7",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "editorMode": "builder",
+          "exemplar": false,
+          "expr": "awair_device_info",
+          "format": "table",
+          "instant": true,
+          "legendFormat": "__auto",
+          "range": false,
+          "refId": "A"
+        }
+      ],
+      "title": "Device Info",
+      "transformations": [
+        {
+          "id": "labelsToFields",
+          "options": {}
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "Value": true,
+              "__name__": true,
+              "container": true,
+              "endpoint": true,
+              "instance": true,
+              "job": true,
+              "namespace": true,
+              "pod": true,
+              "prometheus": true,
+              "service": true
+            },
+            "indexByName": {},
+            "renameByName": {
+              "awair_exporter_device_name": "Device Name",
+              "device_uuid": "UUID"
+            }
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "displayMode": "auto",
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 51
+      },
+      "id": 19,
+      "options": {
+        "footer": {
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true
+      },
+      "pluginVersion": "9.1.7",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "editorMode": "builder",
+          "exemplar": false,
+          "expr": "exporter_info",
+          "format": "table",
+          "instant": true,
+          "legendFormat": "{{label_name}}",
+          "range": false,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "editorMode": "code",
+          "expr": "awair_exporter_info",
+          "hide": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "B"
+        }
+      ],
+      "title": "Exporter Info",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "Value": true,
+              "__name__": true,
+              "app_name": true,
+              "container": true,
+              "endpoint": true,
+              "instance": true,
+              "job": true,
+              "namespace": true,
+              "pod": true,
+              "prometheus": true,
+              "service": true
+            },
+            "indexByName": {
+              "Time": 0,
+              "Value": 14,
+              "__name__": 1,
+              "app_name": 13,
+              "app_version": 5,
+              "awair_exporter_device_name": 2,
+              "container": 3,
+              "device_hostname": 4,
+              "endpoint": 6,
+              "instance": 7,
+              "job": 8,
+              "namespace": 9,
+              "pod": 10,
+              "prometheus": 11,
+              "service": 12
+            },
+            "renameByName": {
+              "Value": "",
+              "app_version": "Exporter Version",
+              "awair_exporter_device_name": "Device Name",
+              "device_hostname": "Device Hostname"
+            }
+          }
+        }
+      ],
+      "type": "table"
     }
   ],
-  "refresh": false,
+  "refresh": "5s",
   "schemaVersion": 37,
   "style": "dark",
   "tags": [],
   "templating": {
-    "list": []
+    "list": [
+      {
+        "current": {
+          "selected": false,
+          "text": "All",
+          "value": "$__all"
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "PBFA97CFB590B2093"
+        },
+        "definition": "label_values(awair_exporter_device_name)",
+        "hide": 0,
+        "includeAll": true,
+        "label": "Awair Device",
+        "multi": true,
+        "name": "device",
+        "options": [],
+        "query": {
+          "query": "label_values(awair_exporter_device_name)",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      }
+    ]
   },
   "time": {
     "from": "now-6h",
@@ -707,6 +960,6 @@
   "timezone": "",
   "title": "Awair",
   "uid": "Wg0uVpSVk",
-  "version": 4,
+  "version": 11,
   "weekStart": ""
 }
