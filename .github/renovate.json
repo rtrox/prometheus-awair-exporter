@@ -1,6 +1,51 @@
 {
-  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "config:base"
+  ],
+  "enabled": true,
+  "timezone": "America/Los_Angeles",
+  "semanticCommits": "enabled",
+  "dependencyDashboard": true,
+  "dependencyDashboardTitle": "Renovate Dashboard 🤖",
+  "commitBody": "Signed-off-by: Russell Troxel <rtrox@users.noreply.github.com>",
+  "suppressNotifications": ["prIgnoreNotification"],
+  "rebaseWhen": "conflicted",
+  "commitMessageTopic": "{{depName}}",
+  "commitMessageExtra": "to {{newVersion}}",
+  "commitMessageSuffix": "",
+  "git-submodules": {
+    "enabled": true
+  },
+  "labels": ["dependencies"],
+  "packageRules": [
+    // add labels according to package and update types
+    {
+      "matchUpdateTypes": ["major"],
+      "addLabels": ["dep/major"]
+    },
+    {
+        "matchUpdateTypes": ["minor"],
+        "addLabels": ["dep/minor"],
+    },
+    {
+        "matchUpdateTypes": ["patch"],
+        "addLabels": ["dep/patch"],
+    },
+    {
+        "matchDatasources": ["docker"],
+        "addLabels": ["dep/docker"],
+    },
+    {
+        "matchDatasources": ["git-refs"],
+        "addLabels": ["dep/git-ref"],
+    },
+    // enable auto-merge
+    {
+      "matchDatasources": ["docker"],
+      "automerge": true,
+      "automergeType": "branch",
+      "requiredStatusChecks": null,
+      "matchUpdateTypes": ["minor", "patch"],
+    }
   ]
 }
