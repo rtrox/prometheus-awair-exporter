@@ -5,7 +5,7 @@ go 1.19
 require (
 	github.com/joho/godotenv v1.5.1
 	github.com/prometheus/client_golang v1.15.1
-	github.com/prometheus/client_model v0.3.0
+	github.com/prometheus/client_model v0.4.0
 	github.com/rs/zerolog v1.29.1
 	github.com/stretchr/testify v1.8.2
 	github.com/tj/assert v0.0.3
