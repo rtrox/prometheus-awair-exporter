@@ -1,4 +1,6 @@
+# yaml-language-server: $schema=https://goreleaser.com/static/schema.json
 ---
+version: 2
 builds:
   - main: ./cmd/awair-exporter/awair-exporter.go
 
@@ -21,10 +23,10 @@ builds:
       - arm64
 
     goarm:
-      - 6
-      - 7
+      - "6"
+      - "7"
 
-    mod_timestamp: '{{ .CommitTimestamp }}'
+    mod_timestamp: "{{ .CommitTimestamp }}"
 
 changelog:
   use: github-native
