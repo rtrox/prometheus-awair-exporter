@@ -52,7 +52,7 @@ jobs:
         uses: goreleaser/goreleaser-action@v6
         with:
           version: latest
-          args: release --rm-dist --config .github/goreleaser-dist.yaml
+          args: release --clean --config .github/goreleaser-dist.yaml
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
