@@ -3,9 +3,11 @@ name: build docker image
 
 on:
   pull_request:
-    branches: main
+    branches:
+      - main
   push:
-    branches: main
+    branches:
+      - main
 
 jobs:
   build:
