@@ -2,7 +2,7 @@ module prometheus-awair-exporter
 
 go 1.21
 
-toolchain go1.23.5
+toolchain go1.24.0
 
 require (
 	github.com/joho/godotenv v1.5.1
