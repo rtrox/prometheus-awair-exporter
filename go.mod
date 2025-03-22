@@ -8,7 +8,7 @@ require (
 	github.com/joho/godotenv v1.5.1
 	github.com/prometheus/client_golang v1.20.5
 	github.com/prometheus/client_model v0.6.1
-	github.com/rs/zerolog v1.33.0
+	github.com/rs/zerolog v1.34.0
 	github.com/stretchr/testify v1.9.0
 	github.com/tj/assert v0.0.3
 )
