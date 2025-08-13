@@ -1,4 +1,4 @@
-FROM golang:1.24-alpine AS build_base
+FROM golang:1.25-alpine AS build_base
 WORKDIR /tmp/awair-exporter
 
 ARG VERSION="devel"
