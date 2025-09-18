@@ -1,2 +1,3 @@
 # Ignore stray built binaries
 **/awair-exporter
+!**/awair-exporter/
