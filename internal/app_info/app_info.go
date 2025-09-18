@@ -7,15 +7,18 @@ import (
 var ()
 
 func AppInfoGaugeFunc(appName string, appVersion string, deviceHostname string) prometheus.GaugeFunc {
+	labels := prometheus.Labels{
+		"app_name":    appName,
+		"app_version": appVersion,
+	}
+	if deviceHostname != "" {
+		labels["device_hostname"] = deviceHostname
+	}
 	infoMetricOpts := prometheus.GaugeOpts{
-		Namespace: "awair_exporter",
-		Name:      "info",
-		Help:      "Info about this awair-exporter",
-		ConstLabels: prometheus.Labels{
-			"app_name":        appName,
-			"app_version":     appVersion,
-			"device_hostname": deviceHostname,
-		},
+		Namespace:   "awair_exporter",
+		Name:        "info",
+		Help:        "Info about this awair-exporter",
+		ConstLabels: labels,
 	}
 	return prometheus.NewGaugeFunc(
 		infoMetricOpts,

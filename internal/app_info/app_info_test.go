@@ -2,7 +2,6 @@ package app_info
 
 import (
 	"io/ioutil"
-	"regexp"
 	"time"
 
 	"testing"
@@ -21,39 +20,42 @@ func TestAllMetricsPopulated(t *testing.T) {
 	assert := assert.New(t)
 	require := require.New(t)
 
-	info := AppInfoGaugeFunc(
-		"asdf",
-		"v1.1.1",
-		"1.2.3.4",
-	)
-	reg := prometheus.NewPedanticRegistry()
-	reg.MustRegister(info)
-	srv := httptest.NewServer(promhttp.HandlerFor(reg, promhttp.HandlerOpts{}))
-	defer srv.Close()
-
-	c := &http.Client{Timeout: 300 * time.Millisecond}
-	resp, err := c.Get(srv.URL)
-	require.Nil(err)
-	defer resp.Body.Close()
-
-	buf, err := ioutil.ReadAll(resp.Body)
-	require.Nil(err)
-
-	/*
-		# HELP awair_exporter_info Info about this awair-exporter
-		# TYPE awair_exporter_info gauge
-		awair_exporter_info{app_name="<appName>",app_version="<appVersion>",device_hostname="<deviceHostname>"} 1
-	*/
-	tests := []struct {
-		desc  string
-		match *regexp.Regexp
+	cases := []struct {
+		name           string
+		hostname       string
+		expectHostname bool
 	}{
-		{"device_info_desc", regexp.MustCompile(`(?m)^# HELP awair_exporter_info .*[a-zA-Z]+.*$`)},
-		{"device_info", regexp.MustCompile(`(?m)^awair_exporter_info{app_name="asdf",app_version="v1.1.1",device_hostname="1.2.3.4"} 1$`)},
+		{"with_hostname", "1.2.3.4", true},
+		{"without_hostname", "", false},
 	}
-	for _, tt := range tests {
-		t.Run(tt.desc, func(t *testing.T) {
-			assert.True(tt.match.Match(buf), "Regex %s didn't match a line!", tt.match.String())
+	for _, cse := range cases {
+		t.Run(cse.name, func(t *testing.T) {
+			info := AppInfoGaugeFunc(
+				"asdf",
+				"v1.1.1",
+				cse.hostname,
+			)
+			reg := prometheus.NewPedanticRegistry()
+			reg.MustRegister(info)
+			srv := httptest.NewServer(promhttp.HandlerFor(reg, promhttp.HandlerOpts{}))
+			defer srv.Close()
+
+			c := &http.Client{Timeout: 300 * time.Millisecond}
+			resp, err := c.Get(srv.URL)
+			require.Nil(err)
+			defer resp.Body.Close()
+
+			buf, err := ioutil.ReadAll(resp.Body)
+			require.Nil(err)
+
+			// Always expect the HELP line
+			assert.Regexp(`(?m)^# HELP awair_exporter_info .*[a-zA-Z]+.*$`, string(buf))
+
+			if cse.expectHostname {
+				assert.Regexp(`(?m)^awair_exporter_info\{app_name="asdf",app_version="v1.1.1",device_hostname="1.2.3.4"\} 1$`, string(buf))
+			} else {
+				assert.Regexp(`(?m)^awair_exporter_info\{app_name="asdf",app_version="v1.1.1"\} 1$`, string(buf))
+			}
 		})
 	}
 }

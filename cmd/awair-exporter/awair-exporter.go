@@ -37,6 +37,49 @@ func newHealthCheckHandler() http.Handler {
 	})
 }
 
+func newProbeHandler() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		target := r.URL.Query().Get("target")
+		if target == "" {
+			http.Error(w, "Missing 'target' query parameter", http.StatusBadRequest)
+			return
+		}
+		ex, err := exporter.NewAwairExporter(target)
+		if err != nil {
+			http.Error(w, "Failed to connect to target: "+err.Error(), http.StatusBadGateway)
+			return
+		}
+		reg := prometheus.NewPedanticRegistry()
+		reg.MustRegister(ex)
+		promhttp.HandlerFor(reg, promhttp.HandlerOpts{}).ServeHTTP(w, r)
+	}
+}
+
+func newMetricsHandler(hostname string, goCollector, processCollector bool) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		reg := prometheus.NewPedanticRegistry()
+		appFunc := app_info.AppInfoGaugeFunc(app_name, version, hostname)
+		reg.MustRegister(appFunc)
+
+		if hostname != "" {
+			// Backward compatible: exporter self-metrics + target metrics
+			ex, err := exporter.NewAwairExporter(hostname)
+			if err != nil {
+				http.Error(w, "Failed to connect to Awair device: "+err.Error(), http.StatusBadGateway)
+				return
+			}
+			reg.MustRegister(ex)
+		}
+		if goCollector {
+			reg.MustRegister(collectors.NewGoCollector())
+		}
+		if processCollector {
+			reg.MustRegister(collectors.NewProcessCollector(collectors.ProcessCollectorOpts{}))
+		}
+		promhttp.HandlerFor(reg, promhttp.HandlerOpts{}).ServeHTTP(w, r)
+	}
+}
+
 func main() {
 	debug := flag.Bool("debug", false, "sets log level to debug")
 	goCollector := flag.Bool("gocollector", false, "enables go stats exporter")
@@ -50,23 +93,23 @@ func main() {
 
 	err := godotenv.Load(".env")
 	if err != nil {
-		// Typical use will be via direct env in kubernetes,
-		// don't fail here.
 		log.Warn().Err(err).Msg("No .env file loaded")
 	}
 
 	hostname := os.Getenv("AWAIR_HOSTNAME")
-	if hostname == "" {
-		log.Fatal().
-			Msg("AWAIR_HOSTNAME must be set to the hostname of the awair device")
+	if hostname != "" {
+		log.Warn().Msg(
+			"[DEPRECATION] AWAIR_HOSTNAME is set. In a future " +
+				"version, only multi-target mode via /probe will be " +
+				"supported. Please update your Prometheus config to " +
+				"use /probe?target=<ip>.",
+		)
 	}
 
 	var srv http.Server
-
 	idleConnsClosed := make(chan struct{})
 	go func() {
 		sigchan := make(chan os.Signal, 1)
-
 		signal.Notify(sigchan, os.Interrupt)
 		signal.Notify(sigchan, syscall.SIGTERM)
 		sig := <-sigchan
@@ -86,32 +129,11 @@ func main() {
 		Str("version", version).
 		Msg("Exporter Started.")
 
-	ex, err := exporter.NewAwairExporter(hostname)
-	if err != nil {
-		log.Fatal().
-			Err(err).
-			Msg("Failed to connect to Awair device.")
-	}
-
-	appFunc := app_info.AppInfoGaugeFunc(
-		app_name,
-		version,
-		hostname,
-	)
-	reg := prometheus.NewPedanticRegistry()
-	reg.MustRegister(
-		appFunc,
-		ex,
-	)
-	if *goCollector {
-		reg.MustRegister(collectors.NewGoCollector())
-	}
-	if *processCollector {
-		reg.MustRegister(collectors.NewProcessCollector(collectors.ProcessCollectorOpts{}))
-	}
 	router := http.NewServeMux()
-	router.Handle("/metrics", promhttp.HandlerFor(reg, promhttp.HandlerOpts{}))
 	router.Handle("/healthz", newHealthCheckHandler())
+	router.Handle("/probe", newProbeHandler())
+	router.Handle("/metrics", newMetricsHandler(hostname, *goCollector, *processCollector))
+
 	srv.Addr = ":8080"
 	srv.Handler = router
 	if err := srv.ListenAndServe(); err != http.ErrServerClosed {
