@@ -9,11 +9,11 @@ on:
 
 jobs:
   pre-commit-check:
-    uses: rtrox/prometheus-awair-exporter/.github/workflows/pre-commit-check.yaml@main
+    uses: ./.github/workflows/pre-commit-check.yaml@main
   go-tests:
-    uses: rtrox/prometheus-awair-exporter/.github/workflows/go-tests.yaml@main
+    uses: ./.github/workflows/go-tests.yaml@main
   docker:
-    uses: rtrox/prometheus-awair-exporter/.github/workflows/docker.yaml@main
+    uses: ./.github/workflows/docker.yaml@main
     needs: [pre-commit-check, go-tests]
     with:
       push_image: ${{ (github.ref == 'refs/heads/main') || startsWith(github.ref, 'refs/tags/v') }}
