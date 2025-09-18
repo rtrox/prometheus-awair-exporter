@@ -23,13 +23,30 @@ So normal usage would be:
 AWAIR_HOSTNAME=192.168.1.2 ./awair-exporter
 ```
 
+
 ## Running via Docker
 
-Docker images are also generated automatically from this repo, and are available [in DockerHub](https://hub.docker.com/repository/docker/rtrox/prometheus-awair-exporter) for use. example usage:
+Docker images are available [on DockerHub](https://hub.docker.com/repository/docker/rtrox/prometheus-awair-exporter) and [GitHub Container Registry](https://github.com/users/rtrox/packages/container/package/prometheus-awair-exporter). Example usage:
 
 ```bash
-docker run -d --name awair-exporter -e AWAIR_HOSTNAME=192.168.3.105 -p 8080:8080 ~rtrox/prometheus-awair-exporter:v0.0.3
+docker run -d --name awair-exporter -p 8080:8080 ghcr.io/rtrox/prometheus-awair-exporter:latest
 ```
+
+### Docker Image Tag Reference
+
+| Tag Example                | Description                                                                 |
+|----------------------------|-----------------------------------------------------------------------------|
+| `v1.2.3`                   | Semantic version tag for a release (major.minor.patch)                       |
+| `v1.2`                      | Major.minor tag for a release                                               |
+| `v1`                        | Major tag for a release                                                     |
+| `latest`                   | Always points to the latest versioned release                               |
+| `sha-abcdef1`              | Image for a specific commit (short SHA)                                     |
+| `main`                     | Moving tag for the main branch (latest commit on main, may be unreleased)    |
+
+**Note:**
+
+- Using the versioned
+- Use `main` for testing the most recent changes on the main branch.
 
 ## Running via Docker Compose
 
@@ -41,17 +58,20 @@ docker compose up -d
 
 ## Running via Kubernetes
 
-Kubernetes manifests are provided in the [`manifests`](kubernetes/manifests/) folder, update the `AWAIR_HOSTNAME` environmental variable in `deployment.yaml`, as well as `awair-exporter/device-name` (the ServiceMonitor will set this as an `awair_exporter_device_name` label on all metrics). From here:
 
-```
+Kubernetes manifests are provided in the [`manifests`](kubernetes/manifests/) folder. Update the `AWAIR_HOSTNAME` environment variable in `deployment.yaml`, as well as `awair-exporter/device-name` (the ServiceMonitor will set this as an `awair_exporter_device_name` label on all metrics). From here:
+
+```sh
 kubectl apply -f manifests/
 ```
 
-If you need to run multiple exporters, make sure you adjust the `metadata.name` and `metadata.labels.app.kubernetes.io/name` fields in each deployment to be unique. No changes need to be made to `service.yaml` or `servicemonitor.yaml` files, they will automatically pick up new deployments for monitoring.
+If you need to run multiple exporters, make sure you adjust the `metadata.name` and `metadata.labels.app.kubernetes.io/name` fields in each deployment to be unique.
+
+No changes need to be made to `service.yaml` or `servicemonitor.yaml` files; they will automatically pick up new deployments for monitoring.
 
 ## Example Metric Output
 
-```bash
+```text
 # HELP awair_absolute_humidity Absolute Humidity (g/m³)
 # TYPE awair_absolute_humidity gauge
 awair_absolute_humidity 7.71

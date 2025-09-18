@@ -1,0 +1,12 @@
+name: Pre-commit Check
+
+on:
+  workflow_dispatch:
+
+jobs:
+  pre-commit-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v6
+      - uses: pre-commit/action@v3.0.1
