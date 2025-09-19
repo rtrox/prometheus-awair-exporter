@@ -3,14 +3,10 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    # sets the pod label below, which is used by ServiceMonitor
-    # to set metric label [change this]
-    awair-exporter/device-name: &device living-room
-    # [change this]
-    app.kubernetes.io/name: &name prometheus-awair-exporter-living-room
-    app.kubernetes.io/instance: &instance prometheus-awair-exporter
-    app.kubernetes.io/component: exporter
-    app.kubernetes.io/part-of: *instance
+    app.kubernetes.io/name: &name prometheus-awair-exporter
+    app.kubernetes.io/instance: *name
+    app.kubernetes.io/component: metrics
+    app.kubernetes.io/part-of: *name
     k8s-app: *name
   name: *name
   namespace: awair-exporter
@@ -28,8 +24,6 @@ spec:
         app.kubernetes.io/name: *name
         app.kubernetes.io/instance: *instance
         app.kubernetes.io/component: metrics
-        # ServiceMonitor adds this device-name field as a metric label
-        awair-exporter/device-name: *device
     spec:
       securityContext:
         runAsUser: 10001
@@ -40,10 +34,6 @@ spec:
           image: 'rtrox/prometheus-awair-exporter:v0.0.3'
           imagePullPolicy: IfNotPresent
           env:
-            # AWAIR_HOSTNAME is the hostname we should reach out to
-            # for this device [change this]
-            - name: AWAIR_HOSTNAME
-              value: "192.168.1.2"
           resources:
             limits:
               memory: 256Mi
