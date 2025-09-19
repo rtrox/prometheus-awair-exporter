@@ -24,11 +24,10 @@ jobs:
         with:
           go-version: "1.22"
 
-      - name: Install GoReleaser
-        uses: goreleaser/goreleaser-action@v5
+      - name: Run GoReleaser
+        uses: goreleaser/goreleaser-action@v6
         with:
           version: latest
-      - name: Run GoReleaser
+          args: release --clean --config .github/goreleaser-dist.yaml
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: goreleaser release --clean --config ${{ inputs.goreleaser_config }}
