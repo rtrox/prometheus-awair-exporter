@@ -1,0 +1,48 @@
+name: Release
+
+on:
+  workflow_call:
+    inputs:
+      goreleaser_config:
+        description: "Path to goreleaser config"
+        required: false
+        default: ".github/goreleaser-dist.yaml"
+        type: string
+      generate_changelog:
+        description: 'Let GoReleaser generate changelog/release notes'
+        required: false
+        default: true
+        type: boolean
+
+jobs:
+  release:
+    name: GoReleaser
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.22"
+
+      - name: Install GoReleaser
+        uses: goreleaser/goreleaser-action@v5
+        with:
+          version: latest
+      - name: Run GoReleaser
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          ARGS="--clean --config ${{ inputs.goreleaser_config }}"
+          if [ "${{ inputs.generate_changelog }}" = "false" ]; then
+            echo "generate_changelog=false -> running goreleaser with --skip-publish"
+            ARGS="$ARGS --skip-publish"
+          else
+            echo "generate_changelog=true -> running goreleaser to publish release and generate changelog"
+          fi
+          goreleaser release $ARGS
