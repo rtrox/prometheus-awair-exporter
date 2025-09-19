@@ -8,11 +8,6 @@ on:
         required: false
         default: ".github/goreleaser-dist.yaml"
         type: string
-      generate_changelog:
-        description: 'Let GoReleaser generate changelog/release notes'
-        required: false
-        default: true
-        type: boolean
 
 jobs:
   release:
@@ -36,13 +31,4 @@ jobs:
       - name: Run GoReleaser
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          set -euo pipefail
-          ARGS="--clean --config ${{ inputs.goreleaser_config }}"
-          if [ "${{ inputs.generate_changelog }}" = "false" ]; then
-            echo "generate_changelog=false -> running goreleaser with --skip-publish"
-            ARGS="$ARGS --skip-publish"
-          else
-            echo "generate_changelog=true -> running goreleaser to publish release and generate changelog"
-          fi
-          goreleaser release $ARGS
+        run: goreleaser release --clean --config ${{ inputs.goreleaser_config }}
