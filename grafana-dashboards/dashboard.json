@@ -24,13 +24,13 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 26,
+  "id": 60,
   "links": [],
-  "liveNow": false,
   "panels": [
     {
       "datasource": {
-        "type": "prometheus"
+        "type": "prometheus",
+        "uid": "${DS}"
       },
       "fieldConfig": {
         "defaults": {
@@ -43,7 +43,7 @@
             "steps": [
               {
                 "color": "dark-red",
-                "value": null
+                "value": 0
               },
               {
                 "color": "orange",
@@ -74,30 +74,36 @@
       },
       "id": 12,
       "options": {
+        "minVizHeight": 75,
+        "minVizWidth": 75,
         "orientation": "auto",
         "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
+          "calcs": ["lastNotNull"],
           "fields": "",
           "values": false
         },
         "showThresholdLabels": false,
-        "showThresholdMarkers": true
+        "showThresholdMarkers": true,
+        "sizing": "auto"
       },
-      "pluginVersion": "9.1.7",
+      "pluginVersion": "12.1.1",
       "targets": [
         {
           "datasource": {
-            "type": "prometheus"
+            "type": "prometheus",
+            "uid": "${DS}"
           },
+          "disableTextWrap": false,
           "editorMode": "builder",
           "exemplar": false,
-          "expr": "awair_score",
+          "expr": "awair_score{instance=~\"$device\"}",
+          "fullMetaSearch": false,
+          "includeNullMetadata": true,
           "instant": true,
-          "legendFormat": "{{awair_exporter_device_name}}",
+          "legendFormat": "{{instance}}",
           "range": false,
-          "refId": "A"
+          "refId": "A",
+          "useBackend": false
         }
       ],
       "title": "Awair Score",
@@ -105,7 +111,8 @@
     },
     {
       "datasource": {
-        "type": "prometheus"
+        "type": "prometheus",
+        "uid": "${DS}"
       },
       "fieldConfig": {
         "defaults": {
@@ -113,11 +120,13 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 0,
             "gradientMode": "none",
@@ -126,6 +135,7 @@
               "tooltip": false,
               "viz": false
             },
+            "insertNulls": false,
             "lineInterpolation": "linear",
             "lineWidth": 1,
             "pointSize": 5,
@@ -148,7 +158,7 @@
             "steps": [
               {
                 "color": "dark-red",
-                "value": null
+                "value": 0
               },
               {
                 "color": "orange",
@@ -186,20 +196,27 @@
           "showLegend": true
         },
         "tooltip": {
+          "hideZeros": false,
           "mode": "single",
           "sort": "none"
         }
       },
+      "pluginVersion": "12.1.1",
       "targets": [
         {
           "datasource": {
-            "type": "prometheus"
+            "type": "prometheus",
+            "uid": "${DS}"
           },
+          "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "awair_score{awair_exporter_device_name=~\"$device\"}",
-          "legendFormat": "{{awair_exporter_device_name}}",
+          "expr": "awair_score{instance=~\"$device\"}",
+          "fullMetaSearch": false,
+          "includeNullMetadata": true,
+          "legendFormat": "{{instance}}",
           "range": true,
-          "refId": "A"
+          "refId": "A",
+          "useBackend": false
         }
       ],
       "title": "Awair Score",
@@ -207,7 +224,8 @@
     },
     {
       "datasource": {
-        "type": "prometheus"
+        "type": "prometheus",
+        "uid": "${DS}"
       },
       "fieldConfig": {
         "defaults": {
@@ -215,11 +233,13 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 0,
             "gradientMode": "none",
@@ -228,6 +248,7 @@
               "tooltip": false,
               "viz": false
             },
+            "insertNulls": false,
             "lineInterpolation": "linear",
             "lineWidth": 1,
             "pointSize": 5,
@@ -250,7 +271,7 @@
             "steps": [
               {
                 "color": "green",
-                "value": null
+                "value": 0
               },
               {
                 "color": "#EAB839",
@@ -280,20 +301,27 @@
           "showLegend": true
         },
         "tooltip": {
+          "hideZeros": false,
           "mode": "single",
           "sort": "none"
         }
       },
+      "pluginVersion": "12.1.1",
       "targets": [
         {
           "datasource": {
-            "type": "prometheus"
+            "type": "prometheus",
+            "uid": "${DS}"
           },
+          "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "awair_co2{awair_exporter_device_name=~\"$device\"}",
-          "legendFormat": "{{awair_exporter_device_name}}",
+          "expr": "awair_co2{instance=~\"$device\"}",
+          "fullMetaSearch": false,
+          "includeNullMetadata": true,
+          "legendFormat": "{{instance}}",
           "range": true,
-          "refId": "A"
+          "refId": "A",
+          "useBackend": false
         }
       ],
       "title": "Carbon Dioxide (ppm)",
@@ -301,7 +329,8 @@
     },
     {
       "datasource": {
-        "type": "prometheus"
+        "type": "prometheus",
+        "uid": "${DS}"
       },
       "fieldConfig": {
         "defaults": {
@@ -309,11 +338,13 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 0,
             "gradientMode": "none",
@@ -322,6 +353,7 @@
               "tooltip": false,
               "viz": false
             },
+            "insertNulls": false,
             "lineInterpolation": "linear",
             "lineWidth": 1,
             "pointSize": 5,
@@ -344,7 +376,7 @@
             "steps": [
               {
                 "color": "green",
-                "value": null
+                "value": 0
               },
               {
                 "color": "yellow",
@@ -382,20 +414,27 @@
           "showLegend": true
         },
         "tooltip": {
+          "hideZeros": false,
           "mode": "single",
           "sort": "none"
         }
       },
+      "pluginVersion": "12.1.1",
       "targets": [
         {
           "datasource": {
-            "type": "prometheus"
+            "type": "prometheus",
+            "uid": "${DS}"
           },
+          "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "awair_voc{awair_exporter_device_name=~\"$device\"}",
-          "legendFormat": "{{awair_exporter_device_name}}",
+          "expr": "awair_voc{instance=~\"$device\"}",
+          "fullMetaSearch": false,
+          "includeNullMetadata": true,
+          "legendFormat": "{{instance}}",
           "range": true,
-          "refId": "A"
+          "refId": "A",
+          "useBackend": false
         }
       ],
       "title": "Total Volatile Organic Compounds (ppb)",
@@ -403,7 +442,8 @@
     },
     {
       "datasource": {
-        "type": "prometheus"
+        "type": "prometheus",
+        "uid": "${DS}"
       },
       "fieldConfig": {
         "defaults": {
@@ -411,11 +451,13 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 0,
             "gradientMode": "none",
@@ -424,6 +466,7 @@
               "tooltip": false,
               "viz": false
             },
+            "insertNulls": false,
             "lineInterpolation": "linear",
             "lineWidth": 1,
             "pointSize": 5,
@@ -446,7 +489,7 @@
             "steps": [
               {
                 "color": "green",
-                "value": null
+                "value": 0
               },
               {
                 "color": "yellow",
@@ -484,20 +527,27 @@
           "showLegend": true
         },
         "tooltip": {
+          "hideZeros": false,
           "mode": "single",
           "sort": "none"
         }
       },
+      "pluginVersion": "12.1.1",
       "targets": [
         {
           "datasource": {
-            "type": "prometheus"
+            "type": "prometheus",
+            "uid": "${DS}"
           },
+          "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "awair_pm25{awair_exporter_device_name=~\"$device\"}",
-          "legendFormat": "{{awair_exporter_device_name}}",
+          "expr": "awair_pm25{instance=~\"$device\"}",
+          "fullMetaSearch": false,
+          "includeNullMetadata": true,
+          "legendFormat": "{{instance}}",
           "range": true,
-          "refId": "A"
+          "refId": "A",
+          "useBackend": false
         }
       ],
       "title": "Particulate Matter < 2.5 microns",
@@ -505,7 +555,8 @@
     },
     {
       "datasource": {
-        "type": "prometheus"
+        "type": "prometheus",
+        "uid": "${DS}"
       },
       "fieldConfig": {
         "defaults": {
@@ -513,11 +564,13 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 0,
             "gradientMode": "none",
@@ -526,6 +579,7 @@
               "tooltip": false,
               "viz": false
             },
+            "insertNulls": false,
             "lineInterpolation": "linear",
             "lineWidth": 1,
             "pointSize": 5,
@@ -548,7 +602,7 @@
             "steps": [
               {
                 "color": "dark-red",
-                "value": null
+                "value": 0
               }
             ]
           }
@@ -570,18 +624,21 @@
           "showLegend": true
         },
         "tooltip": {
+          "hideZeros": false,
           "mode": "single",
           "sort": "none"
         }
       },
+      "pluginVersion": "12.1.1",
       "targets": [
         {
           "datasource": {
-            "type": "prometheus"
+            "type": "prometheus",
+            "uid": "${DS}"
           },
           "editorMode": "code",
-          "expr": "(awair_temp{awair_exporter_device_name=~\"$device\"} * 9/5) + 32",
-          "legendFormat": "{{awair_exporter_device_name}}",
+          "expr": "(awair_temp{instance=~\"$device\"} * 9/5) + 32",
+          "legendFormat": "{{instance}}",
           "range": true,
           "refId": "A"
         }
@@ -591,7 +648,8 @@
     },
     {
       "datasource": {
-        "type": "prometheus"
+        "type": "prometheus",
+        "uid": "${DS}"
       },
       "fieldConfig": {
         "defaults": {
@@ -599,11 +657,13 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 0,
             "gradientMode": "none",
@@ -612,6 +672,7 @@
               "tooltip": false,
               "viz": false
             },
+            "insertNulls": false,
             "lineInterpolation": "linear",
             "lineWidth": 1,
             "pointSize": 5,
@@ -634,7 +695,7 @@
             "steps": [
               {
                 "color": "green",
-                "value": null
+                "value": 0
               },
               {
                 "color": "red",
@@ -660,20 +721,27 @@
           "showLegend": true
         },
         "tooltip": {
+          "hideZeros": false,
           "mode": "single",
           "sort": "none"
         }
       },
+      "pluginVersion": "12.1.1",
       "targets": [
         {
           "datasource": {
-            "type": "prometheus"
+            "type": "prometheus",
+            "uid": "${DS}"
           },
+          "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "awair_humidity{awair_exporter_device_name=~\"$device\"}",
-          "legendFormat": "{{awair_exporter_device_name}}",
+          "expr": "awair_humidity{instance=~\"$device\"}",
+          "fullMetaSearch": false,
+          "includeNullMetadata": true,
+          "legendFormat": "{{instance}}",
           "range": true,
-          "refId": "A"
+          "refId": "A",
+          "useBackend": false
         }
       ],
       "title": "Humidity (%)",
@@ -681,7 +749,8 @@
     },
     {
       "datasource": {
-        "type": "prometheus"
+        "type": "prometheus",
+        "uid": "${DS}"
       },
       "fieldConfig": {
         "defaults": {
@@ -690,7 +759,9 @@
           },
           "custom": {
             "align": "auto",
-            "displayMode": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
             "inspect": false
           },
           "mappings": [],
@@ -699,7 +770,7 @@
             "steps": [
               {
                 "color": "green",
-                "value": null
+                "value": 0
               },
               {
                 "color": "red",
@@ -718,29 +789,34 @@
       },
       "id": 17,
       "options": {
+        "cellHeight": "sm",
         "footer": {
+          "countRows": false,
           "fields": "",
-          "reducer": [
-            "sum"
-          ],
+          "reducer": ["sum"],
           "show": false
         },
         "showHeader": true
       },
-      "pluginVersion": "9.1.7",
+      "pluginVersion": "12.1.1",
       "targets": [
         {
           "datasource": {
-            "type": "prometheus"
+            "type": "prometheus",
+            "uid": "${DS}"
           },
+          "disableTextWrap": false,
           "editorMode": "builder",
           "exemplar": false,
-          "expr": "awair_device_info",
+          "expr": "awair_device_info{instance=~\"$device\"}",
           "format": "table",
+          "fullMetaSearch": false,
+          "includeNullMetadata": true,
           "instant": true,
           "legendFormat": "__auto",
           "range": false,
-          "refId": "A"
+          "refId": "A",
+          "useBackend": false
         }
       ],
       "title": "Device Info",
@@ -758,17 +834,32 @@
               "__name__": true,
               "container": true,
               "endpoint": true,
-              "instance": true,
+              "instance": false,
               "job": true,
               "namespace": true,
               "pod": true,
               "prometheus": true,
+              "prometheus_replica": true,
               "service": true
             },
-            "indexByName": {},
+            "includeByName": {},
+            "indexByName": {
+              "Time": 0,
+              "Value": 10,
+              "__name__": 1,
+              "device_uuid": 2,
+              "firmware_version": 4,
+              "instance": 3,
+              "job": 5,
+              "namespace": 6,
+              "prometheus": 7,
+              "prometheus_replica": 8,
+              "voc_feature_set": 9
+            },
             "renameByName": {
               "awair_exporter_device_name": "Device Name",
-              "device_uuid": "UUID"
+              "device_uuid": "UUID",
+              "instance": "IP Address"
             }
           }
         }
@@ -786,7 +877,9 @@
           },
           "custom": {
             "align": "auto",
-            "displayMode": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
             "inspect": false
           },
           "mappings": [],
@@ -795,7 +888,7 @@
             "steps": [
               {
                 "color": "green",
-                "value": null
+                "value": 0
               },
               {
                 "color": "red",
@@ -814,40 +907,33 @@
       },
       "id": 19,
       "options": {
+        "cellHeight": "sm",
         "footer": {
+          "countRows": false,
           "fields": "",
-          "reducer": [
-            "sum"
-          ],
+          "reducer": ["sum"],
           "show": false
         },
         "showHeader": true
       },
-      "pluginVersion": "9.1.7",
+      "pluginVersion": "12.1.1",
       "targets": [
         {
           "datasource": {
             "type": "prometheus"
           },
+          "disableTextWrap": false,
           "editorMode": "builder",
           "exemplar": false,
-          "expr": "exporter_info",
+          "expr": "awair_exporter_info",
           "format": "table",
+          "fullMetaSearch": false,
+          "includeNullMetadata": true,
           "instant": true,
           "legendFormat": "{{label_name}}",
           "range": false,
-          "refId": "A"
-        },
-        {
-          "datasource": {
-            "type": "prometheus"
-          },
-          "editorMode": "code",
-          "expr": "awair_exporter_info",
-          "hide": false,
-          "legendFormat": "__auto",
-          "range": true,
-          "refId": "B"
+          "refId": "A",
+          "useBackend": false
         }
       ],
       "title": "Exporter Info",
@@ -865,10 +951,12 @@
               "instance": true,
               "job": true,
               "namespace": true,
-              "pod": true,
+              "pod": false,
               "prometheus": true,
-              "service": true
+              "prometheus_replica": false,
+              "service": false
             },
+            "includeByName": {},
             "indexByName": {
               "Time": 0,
               "Value": 14,
@@ -890,7 +978,10 @@
               "Value": "",
               "app_version": "Exporter Version",
               "awair_exporter_device_name": "Device Name",
-              "device_hostname": "Device Hostname"
+              "device_hostname": "Device Hostname",
+              "pod": "Pod",
+              "prometheus_replica": "Prometheus Replica",
+              "service": "Service"
             }
           }
         }
@@ -898,37 +989,56 @@
       "type": "table"
     }
   ],
+  "preload": false,
   "refresh": "5s",
-  "schemaVersion": 37,
-  "style": "dark",
+  "schemaVersion": 41,
   "tags": [],
   "templating": {
     "list": [
       {
         "current": {
-          "selected": false,
-          "text": "All",
-          "value": "$__all"
+          "text": ["All"],
+          "value": ["$__all"]
         },
         "datasource": {
           "type": "prometheus"
         },
-        "definition": "label_values(awair_exporter_device_name)",
-        "hide": 0,
+        "definition": "label_values(awair_device_info,instance)",
         "includeAll": true,
         "label": "Awair Device",
         "multi": true,
         "name": "device",
         "options": [],
         "query": {
-          "query": "label_values(awair_exporter_device_name)",
-          "refId": "StandardVariableQuery"
+          "qryType": 1,
+          "query": "label_values(awair_device_info,instance)",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
         },
         "refresh": 1,
         "regex": "",
-        "skipUrlSync": false,
-        "sort": 0,
         "type": "query"
+      },
+      {
+        "current": {
+          "text": "Prometheus",
+          "value": "PBFA97CFB590B2093"
+        },
+        "name": "DS",
+        "options": [],
+        "query": "prometheus",
+        "refresh": 1,
+        "regex": "",
+        "type": "datasource"
+      },
+      {
+        "current": {
+          "text": "",
+          "value": ""
+        },
+        "name": "query0",
+        "options": [],
+        "query": "",
+        "type": "custom"
       }
     ]
   },
@@ -940,6 +1050,5 @@
   "timezone": "",
   "title": "Awair",
   "uid": "Wg0uVpSVk",
-  "version": 11,
-  "weekStart": ""
+  "version": 2
 }

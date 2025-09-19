@@ -6,17 +6,10 @@ metadata:
   name: devices
 spec:
   prober:
-    url: prometheus-awair-exporter.awair_exporter.svc.cluster.local:8080
+    url: prometheus-awair-exporter.awair-exporter.svc.cluster.local:8080
     path: /probe
   targets:
     staticConfig:
       static:
         - 192.168.1.1
         - 192.168.1.2
-      relabelingConfigs:
-        - sourceLabels: [__address__]
-          targetLabel: __param_target
-        - sourceLabels: [__param_target]
-          targetLabel: target
-        - targetLabel: __address__
-          replacement: prometheus-awair-exporter.awair-exporter.svc:8080
