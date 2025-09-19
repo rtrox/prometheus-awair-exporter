@@ -2,9 +2,9 @@
 # Prometheus Awair Exporter
 
 ![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/rtrox/prometheus-awair-exporter)
-![Docker Image Version (latest semver)](https://img.shields.io/docker/v/rtrox/prometheus-awair-exporter?label=docker%20image)
+![Docker Image Version](https://img.shields.io/docker/v/rtrox/prometheus-awair-exporter?sort=semver&label=docker%20image)
 ![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/rtrox/prometheus-awair-exporter)
-![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/rtrox/prometheus-awair-exporter/test.yaml?label=tests)
+[![CI Pipeline](https://github.com/rtrox/prometheus-awair-exporter/actions/workflows/ci-pipeline.yaml/badge.svg)](https://github.com/rtrox/prometheus-awair-exporter/actions/workflows/ci-pipeline.yaml)
 [![Coverage Status](https://coveralls.io/repos/github/rtrox/prometheus-awair-exporter/badge.svg?branch=main)](https://coveralls.io/github/rtrox/prometheus-awair-exporter?branch=main)
 
 > [!IMPORTANT]
